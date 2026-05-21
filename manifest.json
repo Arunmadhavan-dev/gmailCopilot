@@ -1,0 +1,32 @@
+﻿{
+  "manifest_version": 3,
+  "name": "Inbox Copilot",
+  "description": "Floating conversational assistant for Gmail.",
+  "version": "0.2.0",
+  "permissions": ["storage", "identity"],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://www.googleapis.com/*",
+    "https://oauth2.googleapis.com/*"
+  ],
+  "oauth2": {
+    "client_id": "290070331076-629mm3mo96skkgnj8o0u2g40eeo92bp9.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.readonly"
+    ]
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Inbox Copilot"
+  }
+}
