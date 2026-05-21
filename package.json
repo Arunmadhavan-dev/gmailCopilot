@@ -1,16 +1,17 @@
-﻿{
+{
   "name": "inbox-copilot-extension",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-manifest.mjs && vite build && copy manifest.json dist\\manifest.json /Y",
-    "dev": "node scripts/generate-manifest.mjs && vite build --watch"
+    "build": "node scripts/generate-manifest.mjs && node scripts/generate-ai-config.mjs && vite build && copy manifest.json dist\\manifest.json /Y",
+    "dev": "node scripts/generate-manifest.mjs && node scripts/generate-ai-config.mjs && vite build --watch"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

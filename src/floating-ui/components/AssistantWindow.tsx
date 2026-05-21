@@ -1,5 +1,7 @@
 ﻿import { AnimatePresence, motion } from "framer-motion";
+import { JSX } from "react";
 import { type GmailThread } from "../../types/runtime";
+import type { AICommandState } from "../hooks/useAICommands";
 
 type Props = {
   isOpen: boolean;
@@ -7,6 +9,12 @@ type Props = {
   connectedLabel: string;
   threads: GmailThread[];
   error: string;
+  aiState: AICommandState;
+  aiInput: string;
+  onAiInputChange: (value: string) => void;
+  onAiSubmit: () => void;
+  onAiConfirm: () => void;
+  onAiCancel: () => void;
   onConnectGoogle: () => Promise<void>;
   onDisconnectGoogle: () => Promise<void>;
   onLoadThreads: () => Promise<void>;
@@ -18,6 +26,12 @@ export function AssistantWindow({
   connectedLabel,
   threads,
   error,
+  aiState,
+  aiInput,
+  onAiInputChange,
+  onAiSubmit,
+  onAiConfirm,
+  onAiCancel,
   onConnectGoogle,
   onDisconnectGoogle,
   onLoadThreads
@@ -47,10 +61,43 @@ export function AssistantWindow({
             {threads.map((thread) => (
               <p key={thread.id}>- {thread.id} {thread.snippet ? `| ${thread.snippet}` : ""}</p>
             ))}
+
+            {/* AI Command Status */}
+            {aiState.status === "parsing" && <p>🤔 Understanding: "{aiState.input}"...</p>}
+            {aiState.status === "executing" && <p>⚡ Executing {aiState.intent.action.action}...</p>}
+            {aiState.status === "needs_confirmation" && (
+              <div>
+                <p>⚠️ Confirm: {aiState.intent.action.action} with query "{aiState.intent.action.query}"?</p>
+                <p>
+                  <button className="ic-send" type="button" onClick={onAiConfirm}>Confirm</button>{" "}
+                  <button className="ic-send" type="button" onClick={onAiCancel}>Cancel</button>
+                </p>
+              </div>
+            )}
+            {aiState.status === "completed" && (
+              <p>✅ {aiState.intent.action.action} completed. {aiState.result.affectedCount ?? 0} items affected.</p>
+            )}
+            {aiState.status === "error" && <p>❌ {aiState.error}</p>}
           </div>
+
+          {/* AI Input */}
           <div className="ic-input-row">
-            <input className="ic-input" placeholder="Ask Inbox Copilot..." />
-            <button className="ic-send" type="button">Send</button>
+            <input
+              className="ic-input"
+              placeholder="Ask Inbox Copilot... (e.g., 'find emails from john')"
+              value={aiInput}
+              onChange={(e) => onAiInputChange(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && onAiSubmit()}
+              disabled={aiState.status === "parsing" || aiState.status === "executing"}
+            />
+            <button
+              className="ic-send"
+              type="button"
+              onClick={onAiSubmit}
+              disabled={aiState.status === "parsing" || aiState.status === "executing"}
+            >
+              {aiState.status === "parsing" || aiState.status === "executing" ? "..." : "Send"}
+            </button>
           </div>
         </motion.section>
       ) : null}
