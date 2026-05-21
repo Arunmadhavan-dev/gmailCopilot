@@ -32,6 +32,8 @@ export function handleParseError(
     userMessage = "Network error connecting to AI service. Check connection.";
   } else if (errorMessage.includes("Rate limit")) {
     userMessage = "Too many requests. Please wait a moment and try again.";
+  } else if (errorMessage.includes("JSON") || errorMessage.includes("validate")) {
+    userMessage = "AI had trouble understanding. Try being more specific about what emails you want.";
   }
   
   return createClarifyResult(userInput, userMessage);

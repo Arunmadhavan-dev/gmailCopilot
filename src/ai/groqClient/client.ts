@@ -1,5 +1,6 @@
 import type { GroqCompletionRequest, GroqCompletionResponse, GroqClientConfig } from "./types";
 import { GROQ_API_URL } from "./constants";
+import { parseJSON } from "../utils/jsonRepair";
 
 /**
  * GroqClient handles communication with Groq API
@@ -34,11 +35,15 @@ export class GroqClient {
       response_format: { type: "json_object" }
     });
 
-    try {
-      return JSON.parse(content) as T;
-    } catch {
-      throw new Error("Failed to parse LLM response as JSON");
+    // Try to parse with repair utility
+    const parsed = parseJSON<T>(content);
+    
+    if (parsed === null) {
+      console.error("Failed to parse JSON response:", content.substring(0, 200));
+      throw new Error("Failed to parse LLM response as JSON. Please adjust your prompt.");
     }
+
+    return parsed;
   }
 
   private buildHeaders(): Record<string, string> {
