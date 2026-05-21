@@ -5,3 +5,9 @@ dist/
 .env.*.local
 md/
 src/ai/config.ts
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
