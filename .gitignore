@@ -5,3 +5,4 @@ dist/
 .env.*.local
 manifest.json
 md/
+src/ai/config.ts
