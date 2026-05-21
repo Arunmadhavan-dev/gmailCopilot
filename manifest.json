@@ -10,7 +10,7 @@
     "https://oauth2.googleapis.com/*"
   ],
   "oauth2": {
-    "client_id": "__GOOGLE_OAUTH_CLIENT_ID__",
+    "client_id": "290070331076-629mm3mo96skkgnj8o0u2g40eeo92bp9.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/gmail.readonly"
     ]
@@ -28,5 +28,8 @@
   ],
   "action": {
     "default_title": "Inbox Copilot"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }

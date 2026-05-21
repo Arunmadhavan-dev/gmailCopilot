@@ -98,7 +98,7 @@ describe("Action Handlers", () => {
         reason: "Please specify the time range"
       };
 
-      const result = await handleClarify(action, mockToken);
+      const result = await handleClarify(action);
 
       expect(result.success).toBe(false);
       expect(result.error).toBe("Please specify the time range");

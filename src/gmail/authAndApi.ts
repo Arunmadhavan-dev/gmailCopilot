@@ -38,8 +38,9 @@ export async function clearAuthToken(token: string): Promise<void> {
   await fetch(`https://oauth2.googleapis.com/revoke?token=${encodeURIComponent(token)}`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
-  }).catch(() => {
+  }).catch((err) => {
     // Revocation network failures are non-fatal for local logout.
+    console.warn("Token revocation failed:", err);
   });
 }
 

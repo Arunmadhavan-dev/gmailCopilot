@@ -20,10 +20,12 @@ export function handleParseError(
   error: unknown,
   userInput: string
 ): IntentParseResult {
-  const message = error instanceof Error ? error.message : "Unknown error";
+  // Log full error internally for debugging
+  console.error("Parse error:", error);
+  // Show generic message to user (no sensitive info)
   return createClarifyResult(
     userInput,
-    `I couldn't understand your request. Please try rephrasing. Error: ${message}`
+    "I couldn't understand your request. Please try rephrasing."
   );
 }
 

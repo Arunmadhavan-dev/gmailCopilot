@@ -1,5 +1,11 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
+/**
+ * GroqClient supports two modes:
+ * 1. Direct API (development): Provide apiKey, calls Groq directly
+ * 2. Worker Proxy (production): Provide workerUrl, calls your Cloudflare Worker
+ *    which securely holds the API key
+ */
 export interface GroqMessage {
   role: "system" | "user" | "assistant";
   content: string;
@@ -27,21 +33,36 @@ export interface GroqCompletionResponse {
 }
 
 export class GroqClient {
-  private apiKey: string;
+  private apiKey?: string;
+  private workerUrl?: string;
   private model: string;
 
-  constructor(apiKey: string, model = "qwen/qwen3-32b") {
+  /**
+   * @param apiKey - Groq API key (for direct API calls in development)
+   * @param model - Model to use (default: qwen/qwen3-32b)
+   * @param workerUrl - Cloudflare Worker URL (for secure production deployment)
+   */
+  constructor(apiKey?: string, model = "qwen/qwen3-32b", workerUrl?: string) {
     this.apiKey = apiKey;
+    this.workerUrl = workerUrl;
     this.model = model;
   }
 
   async complete(request: Omit<GroqCompletionRequest, "model">): Promise<string> {
-    const response = await fetch(GROQ_API_URL, {
+    // Use worker proxy if configured (production), otherwise direct API (development)
+    const url = this.workerUrl || GROQ_API_URL;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json"
+    };
+    
+    // Only add Authorization header for direct API calls
+    if (!this.workerUrl && this.apiKey) {
+      headers["Authorization"] = `Bearer ${this.apiKey}`;
+    }
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${this.apiKey}`,
-        "Content-Type": "application/json"
-      },
+      headers,
       body: JSON.stringify({
         ...request,
         model: this.model
@@ -85,8 +106,14 @@ export function createGroqClient(): GroqClient {
   // @ts-ignore - Module generated at build time
   const { AI_CONFIG } = require("./config");
 
+  // Prefer worker proxy (secure, no API key in bundle)
+  if (AI_CONFIG.GROQ_WORKER_URL) {
+    return new GroqClient(undefined, AI_CONFIG.GROQ_MODEL, AI_CONFIG.GROQ_WORKER_URL);
+  }
+
+  // Fall back to direct API (development only)
   if (!AI_CONFIG.ENABLED || !AI_CONFIG.GROQ_API_KEY) {
-    throw new Error("GROQ_API_KEY not configured. Set it in .env file.");
+    throw new Error("GROQ_API_KEY or GROQ_WORKER_URL not configured. Set one in .env file.");
   }
   return new GroqClient(AI_CONFIG.GROQ_API_KEY, AI_CONFIG.GROQ_MODEL);
 }
