@@ -1,15 +1,14 @@
 import { GroqClient } from "./client";
 import type { GroqClientConfig } from "./types";
 import { DEFAULT_MODEL } from "./constants";
+// @ts-ignore - Generated at build time
+import { AI_CONFIG } from "../config";
 
 /**
  * Creates a GroqClient instance from AI configuration
  * Prefers worker proxy (secure) over direct API key (development)
  */
 export function createGroqClient(): GroqClient {
-  // Import generated config (created at build time)
-  // @ts-ignore - Module generated at build time
-  const { AI_CONFIG } = require("../config");
 
   const config: GroqClientConfig = {
     model: AI_CONFIG.GROQ_MODEL || DEFAULT_MODEL,
