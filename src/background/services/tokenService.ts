@@ -1,4 +1,4 @@
-﻿import { GmailApiError, clearAuthToken, getAuthToken } from "../../gmail/authAndApi";
+﻿import { GmailApiError, clearAuthToken, getAuthToken } from "../../gmail";
 
 export async function getValidToken(interactiveFallback: boolean): Promise<string> {
   let token: string | null = null;

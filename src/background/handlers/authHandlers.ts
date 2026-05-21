@@ -1,4 +1,4 @@
-import { clearAuthToken, fetchProfileEmail, getAuthToken } from "../../gmail/authAndApi";
+import { clearAuthToken, fetchProfileEmail, getAuthToken } from "../../gmail";
 import type { RuntimeMessage } from "../../types/runtime";
 import { getValidToken } from "../services/tokenService";
 

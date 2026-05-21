@@ -1,4 +1,4 @@
-import { fetchGmailThreads } from "../../gmail/authAndApi";
+import { fetchGmailThreads } from "../../gmail";
 import type { RuntimeMessage } from "../../types/runtime";
 import { withFreshToken } from "../services/tokenService";
 

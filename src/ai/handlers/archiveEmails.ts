@@ -1,4 +1,4 @@
-import { fetchGmailThreads } from "../../gmail/authAndApi";
+import { fetchGmailThreads } from "../../gmail";
 import type { AIAction, ActionExecutionResult } from "../types";
 
 export const ARCHIVE_MAX_PREVIEW = 25;

@@ -7,7 +7,7 @@ export * from "./types";
 // Schemas & Validation
 export * from "./schemas";
 
-// LLM Client
+// LLM Client (modular)
 export * from "./groqClient";
 
 // Prompts
