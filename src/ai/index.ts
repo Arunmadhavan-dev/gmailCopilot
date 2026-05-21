@@ -10,6 +10,9 @@ export * from "./schemas";
 // Phase 2: Intent Classification (Semantic Understanding)
 export * from "./classification";
 
+// Phase 3: Smart Query Enhancement & Context Awareness
+export * from "./query";
+
 // LLM Client (modular)
 export * from "./groqClient";
 

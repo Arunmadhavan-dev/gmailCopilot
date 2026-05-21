@@ -33,12 +33,14 @@ export interface ClarifyAction extends BaseAIAction {
 export type AIAction = SearchEmailsAction | ArchiveEmailsAction | DeleteEmailsAction | ClarifyAction;
 
 import type { ClassifiedIntent } from "./classification";
+import type { EnhancedQuery } from "./query";
 
 export interface IntentParseResult {
   action: AIAction;
   confidence: number;
   originalText: string;
   classification?: ClassifiedIntent;  // Phase 2: Semantic understanding
+  enhancedQuery?: EnhancedQuery;      // Phase 3: Query enhancement
 }
 
 export interface ActionExecutionResult {

@@ -4,6 +4,7 @@ import { INTENT_SYSTEM_PROMPT } from "../prompts/intentSystemPrompt";
 import { calculateConfidence } from "../confidence/calculator";
 import { handleParseError, handleLowConfidence } from "./errorHandler";
 import { IntentClassifier } from "../classification";
+import { QueryEnhancer, ContextManager } from "../query";
 import type { AIAction, IntentParseResult } from "../types";
 
 const CONFIDENCE_THRESHOLD = 0.7;
@@ -11,10 +12,14 @@ const CONFIDENCE_THRESHOLD = 0.7;
 export class IntentParser {
   private client: GroqClient;
   private classifier: IntentClassifier;
+  private enhancer: QueryEnhancer;
+  private contextManager: ContextManager;
 
   constructor(client: GroqClient) {
     this.client = client;
     this.classifier = new IntentClassifier();
+    this.enhancer = new QueryEnhancer();
+    this.contextManager = new ContextManager();
   }
 
   async parseIntent(userInput: string, context?: string): Promise<IntentParseResult> {
@@ -46,17 +51,33 @@ export class IntentParser {
         confidence
       );
 
+      // Phase 3: Enhance query with smart operators and context
+      const enhancedQuery = this.enhancer.enhance(
+        userInput,
+        validation.data,
+        classification
+      );
+
+      // Phase 3: Apply context awareness
+      const contextualInput = this.contextManager.enhanceWithContext(userInput);
+      
+      // Record this interaction for future context
+      const result: IntentParseResult = {
+        action: validation.data,
+        confidence,
+        originalText: userInput,
+        classification,  // Phase 2
+        enhancedQuery    // Phase 3
+      };
+      
+      this.contextManager.recordInteraction(result);
+
       // Convert to clarify if confidence is low
       if (confidence < CONFIDENCE_THRESHOLD && validation.data.action !== "clarify") {
         return handleLowConfidence(validation.data.action, confidence, userInput);
       }
 
-      return {
-        action: validation.data,
-        confidence,
-        originalText: userInput,
-        classification  // Phase 2: Added semantic understanding
-      };
+      return result;
     } catch (error) {
       return handleParseError(error, userInput);
     }
