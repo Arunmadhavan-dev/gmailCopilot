@@ -13,6 +13,9 @@ export * from "./classification";
 // Phase 3: Smart Query Enhancement & Context Awareness
 export * from "./query";
 
+// Phase 4: Smart Action Execution & Feedback Loop
+export * from "./execution";
+
 // LLM Client (modular)
 export * from "./groqClient";
 
