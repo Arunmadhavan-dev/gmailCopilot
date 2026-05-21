@@ -75,7 +75,21 @@ export function AssistantWindow({
               </div>
             )}
             {aiState.status === "completed" && (
-              <p>✅ {aiState.intent.action.action} completed. {aiState.result.affectedCount ?? 0} items affected.</p>
+              <div>
+                <p>✅ {aiState.intent.action.action} completed. {aiState.result.affectedCount ?? 0} items found.</p>
+                {/* Show search results */}
+                {aiState.intent.action.action === "search_emails" && 
+                  aiState.result.data && 
+                  Array.isArray(aiState.result.data) && (
+                  <div style={{ marginTop: "8px" }}>
+                    {aiState.result.data.map((thread: { id: string; snippet?: string }) => (
+                      <p key={thread.id} style={{ fontSize: "12px", margin: "4px 0" }}>
+                        • {thread.snippet ? thread.snippet.substring(0, 100) : thread.id}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
             {aiState.status === "error" && <p>❌ {aiState.error}</p>}
           </div>
