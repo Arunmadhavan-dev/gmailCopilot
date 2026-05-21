@@ -1,9 +1,10 @@
 ﻿import { AnimatePresence, motion } from "framer-motion";
-import { JSX } from "react";
-import { type GmailThread } from "../../types/runtime";
+import type { JSX } from "react";
+import type { GmailThread } from "../../types/runtime";
 import type { AICommandState } from "../hooks/useAICommands";
+import { AIStatusPanel, AIInput, GmailStatus } from "./ai";
 
-type Props = {
+interface AssistantWindowProps {
   isOpen: boolean;
   contextLabel: string;
   connectedLabel: string;
@@ -18,7 +19,7 @@ type Props = {
   onConnectGoogle: () => Promise<void>;
   onDisconnectGoogle: () => Promise<void>;
   onLoadThreads: () => Promise<void>;
-};
+}
 
 export function AssistantWindow({
   isOpen,
@@ -35,7 +36,9 @@ export function AssistantWindow({
   onConnectGoogle,
   onDisconnectGoogle,
   onLoadThreads
-}: Props): JSX.Element {
+}: AssistantWindowProps): JSX.Element {
+  const isLoading = aiState.status === "parsing" || aiState.status === "executing";
+
   return (
     <AnimatePresence>
       {isOpen ? (
@@ -49,74 +52,30 @@ export function AssistantWindow({
           aria-label="Inbox Copilot assistant"
         >
           <header className="ic-header">Inbox Copilot - {contextLabel}</header>
+          
           <div className="ic-body">
-            <p>Google OAuth: {connectedLabel}</p>
-            <p>
-              <button className="ic-send" type="button" onClick={() => void onConnectGoogle()}>Connect Google</button>{" "}
-              <button className="ic-send" type="button" onClick={() => void onDisconnectGoogle()}>Logout</button>{" "}
-              <button className="ic-send" type="button" onClick={() => void onLoadThreads()}>Load Inbox Threads</button>
-            </p>
-            {error ? <p>Error: {error}</p> : null}
-            {threads.length > 0 ? <p>Recent threads:</p> : null}
-            {threads.map((thread) => (
-              <p key={thread.id}>- {thread.id} {thread.snippet ? `| ${thread.snippet}` : ""}</p>
-            ))}
-
-            {/* AI Command Status */}
-            {aiState.status === "parsing" && <p>🤔 Understanding: "{aiState.input}"...</p>}
-            {aiState.status === "executing" && <p>⚡ Executing {aiState.intent.action.action}...</p>}
-            {aiState.status === "needs_confirmation" && (
-              <div>
-                <p>⚠️ Confirm: {aiState.intent.action.action} with query "{aiState.intent.action.query}"?</p>
-                <p>
-                  <button className="ic-send" type="button" onClick={onAiConfirm}>Confirm</button>{" "}
-                  <button className="ic-send" type="button" onClick={onAiCancel}>Cancel</button>
-                </p>
-              </div>
-            )}
-            {aiState.status === "completed" && (
-              <div>
-                <p>✅ {aiState.intent.action.action} completed. {aiState.result.affectedCount ?? 0} items found.</p>
-                {/* Show search results */}
-                {(() => {
-                  const data = aiState.result.data;
-                  if (aiState.intent.action.action !== "search_emails") return null;
-                  if (!data || !Array.isArray(data)) return null;
-                  const threads = data as Array<{ id: string; snippet?: string }>;
-                  return (
-                    <div style={{ marginTop: "8px" }}>
-                      {threads.map((thread) => (
-                        <p key={thread.id} style={{ fontSize: "12px", margin: "4px 0" }}>
-                          • {thread.snippet ? thread.snippet.substring(0, 100) : thread.id}
-                        </p>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-            {aiState.status === "error" && <p>❌ {aiState.error}</p>}
-          </div>
-
-          {/* AI Input */}
-          <div className="ic-input-row">
-            <input
-              className="ic-input"
-              placeholder="Ask Inbox Copilot... (e.g., 'find emails from john')"
-              value={aiInput}
-              onChange={(e) => onAiInputChange(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onAiSubmit()}
-              disabled={aiState.status === "parsing" || aiState.status === "executing"}
+            <GmailStatus
+              connectedLabel={connectedLabel}
+              threads={threads}
+              error={error}
+              onConnect={onConnectGoogle}
+              onDisconnect={onDisconnectGoogle}
+              onLoadThreads={onLoadThreads}
             />
-            <button
-              className="ic-send"
-              type="button"
-              onClick={onAiSubmit}
-              disabled={aiState.status === "parsing" || aiState.status === "executing"}
-            >
-              {aiState.status === "parsing" || aiState.status === "executing" ? "..." : "Send"}
-            </button>
+            
+            <AIStatusPanel
+              state={aiState}
+              onConfirm={onAiConfirm}
+              onCancel={onAiCancel}
+            />
           </div>
+
+          <AIInput
+            value={aiInput}
+            onChange={onAiInputChange}
+            onSubmit={onAiSubmit}
+            isLoading={isLoading}
+          />
         </motion.section>
       ) : null}
     </AnimatePresence>
