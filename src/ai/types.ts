@@ -32,10 +32,13 @@ export interface ClarifyAction extends BaseAIAction {
 
 export type AIAction = SearchEmailsAction | ArchiveEmailsAction | DeleteEmailsAction | ClarifyAction;
 
+import type { ClassifiedIntent } from "./classification";
+
 export interface IntentParseResult {
   action: AIAction;
   confidence: number;
   originalText: string;
+  classification?: ClassifiedIntent;  // Phase 2: Semantic understanding
 }
 
 export interface ActionExecutionResult {

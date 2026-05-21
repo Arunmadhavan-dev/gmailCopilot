@@ -7,6 +7,9 @@ export * from "./types";
 // Schemas & Validation
 export * from "./schemas";
 
+// Phase 2: Intent Classification (Semantic Understanding)
+export * from "./classification";
+
 // LLM Client (modular)
 export * from "./groqClient";
 
