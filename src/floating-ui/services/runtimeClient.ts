@@ -4,7 +4,12 @@ export async function sendRuntimeMessage<T>(message: RuntimeMessage): Promise<T>
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(message, (response) => {
       if (chrome.runtime.lastError) {
-        reject(new Error(chrome.runtime.lastError.message));
+        const msg = chrome.runtime.lastError.message;
+        if (msg?.includes("Extension context invalidated")) {
+          reject(new Error("Extension was reloaded. Please refresh the page to continue."));
+        } else {
+          reject(new Error(msg));
+        }
         return;
       }
 
