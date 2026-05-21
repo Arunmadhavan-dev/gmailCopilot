@@ -82,7 +82,7 @@ export function AssistantWindow({
                   aiState.result.data && 
                   Array.isArray(aiState.result.data) && (
                   <div style={{ marginTop: "8px" }}>
-                    {aiState.result.data.map((thread: { id: string; snippet?: string }) => (
+                    {(aiState.result.data as Array<{ id: string; snippet?: string }>).map((thread) => (
                       <p key={thread.id} style={{ fontSize: "12px", margin: "4px 0" }}>
                         • {thread.snippet ? thread.snippet.substring(0, 100) : thread.id}
                       </p>
