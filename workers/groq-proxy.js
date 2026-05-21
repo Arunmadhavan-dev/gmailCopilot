@@ -5,13 +5,19 @@
  * and the Groq API. The API key is stored securely in Cloudflare,
  * never exposed to users or in the extension bundle.
  * 
- * Setup:
- * 1. Create worker in Cloudflare Dashboard
- * 2. Add GROQ_API_KEY as an environment variable
- * 3. Deploy and get your worker URL
- * 4. Update extension to use worker URL instead of direct API
+ * IMPORTANT: This file is for REFERENCE ONLY.
+ * The worker should be deployed separately in its own project.
+ * 
+ * To deploy:
+ * 1. Create new folder outside this project
+ * 2. Copy this code and uncomment it
+ * 3. Deploy using Wrangler or Cloudflare Dashboard
+ * 
+ * DO NOT try to run wrangler init inside the extension project - 
+ * it will conflict with the Chrome extension Vite build.
  */
 
+/*
 export default {
   async fetch(request, env, ctx) {
     // CORS headers
@@ -136,3 +142,4 @@ async function checkRateLimit(key, env) {
   
   return { allowed, remaining: Math.max(0, limit - count - 1) };
 }
+*/

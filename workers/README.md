@@ -1,6 +1,36 @@
-# Cloudflare Worker Proxy Setup
+# Cloudflare Worker Proxy - REFERENCE ONLY
 
-This directory contains a Cloudflare Worker that acts as a secure proxy to the Groq API. This hides your API key from the extension bundle.
+**⚠️ IMPORTANT:** This directory is for **REFERENCE ONLY**. Do not run wrangler commands here.
+
+The worker code in `groq-proxy.js` is commented out. To deploy, you must:
+1. Create a **separate project folder** outside this extension
+2. Copy the code and uncomment it
+3. Deploy using Wrangler or Cloudflare Dashboard
+
+## Why Separate?
+
+Chrome extensions and Cloudflare Workers have conflicting build tools:
+- Extension uses Vite
+- Worker uses Wrangler
+
+Mixing them causes errors like:
+```
+Wrangler trying to auto-configure Vite and failing
+```
+
+## Quick Deploy (Cloudflare Dashboard)
+
+1. Go to https://dash.cloudflare.com
+2. Workers & Pages → Create Worker
+3. Name it `gmail-copilot-groq-proxy`
+4. In the code editor, paste the content of `groq-proxy.js` (after uncommenting)
+5. Settings → Variables and Secrets
+   - Add `GROQ_API_KEY` = your actual Groq API key
+   - Click **Encrypt**
+6. Save & Deploy
+7. Copy your worker URL: `https://gmail-copilot-groq-proxy.YOUR_SUBDOMAIN.workers.dev`
+
+## Full Setup with Wrangler (Separate Project)
 
 ## Why Use a Proxy?
 
