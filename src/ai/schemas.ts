@@ -9,7 +9,7 @@ export const AIActionTypeSchema = z.enum([
 
 export const BaseAIActionSchema = z.object({
   action: AIActionTypeSchema,
-  query: z.string().min(1, "Query cannot be empty"),
+  query: z.string(),
   requiresConfirmation: z.boolean().optional(),
   reason: z.string().optional()
 });
@@ -31,6 +31,7 @@ export const DeleteEmailsActionSchema = BaseAIActionSchema.extend({
 
 export const ClarifyActionSchema = BaseAIActionSchema.extend({
   action: z.literal("clarify"),
+  requiresConfirmation: z.literal(false).optional(),
   reason: z.string().min(1, "Reason is required for clarification")
 });
 
