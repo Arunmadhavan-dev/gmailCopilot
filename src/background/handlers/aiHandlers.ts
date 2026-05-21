@@ -1,7 +1,7 @@
 import { AI_CONFIG } from "../../ai/config";
 import { getActionEngine } from "../../ai/engine/factory";
 import { IntentParser } from "../../ai/parsers/intentParser";
-import { GroqClient } from "../../ai/groqClient";
+import { createGroqClient } from "../../ai/groqClient";
 import type { AIAction } from "../../ai/types";
 import type { RuntimeMessage } from "../../types/runtime";
 import { withFreshToken } from "../services/tokenService";
@@ -53,7 +53,7 @@ async function handleParseIntent(input: string, context?: string) {
   }
 
   try {
-    const client = new GroqClient(AI_CONFIG.GROQ_API_KEY, AI_CONFIG.GROQ_MODEL);
+    const client = createGroqClient();
     const parser = new IntentParser(client);
     const result = await parser.parseIntent(input, context);
 
