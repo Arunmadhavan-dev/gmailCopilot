@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-ai-config.mjs && vite build && cp manifest.json dist\\manifest.json",
+    "build": "node scripts/generate-ai-config.mjs && vite build && copy manifest.json dist\\manifest.json /Y",
     "dev": "node scripts/generate-ai-config.mjs && vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",

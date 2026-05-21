@@ -2,6 +2,7 @@
 import { resolve } from "node:path";
 
 export default defineConfig({
+  plugins: [],
   build: {
     outDir: "dist",
     emptyOutDir: true,
